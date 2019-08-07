@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void main() => runApp(MyApp());
 
@@ -45,17 +46,12 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  void customLaunch(command) async {
+    if (await canLaunch(command)) {
+      await launch(command);
+    } else {
+      print(' could not launch $command');
+    }
   }
 
   @override
@@ -92,21 +88,39 @@ class _MyHomePageState extends State<MyHomePage> {
           // horizontal).
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.display1,
-            ),
+            Column(
+              children: <Widget>[
+                RaisedButton(
+                  onPressed: () {
+                    customLaunch('https://google.com');
+                  },
+                  child: Text('URL'),
+                ),
+                RaisedButton(
+                  onPressed: () {
+                    customLaunch(
+                        'mailto:your@email.com?subject=test%20subject&body=test%20body');
+                  },
+                  child: Text('Email'),
+                ),
+                RaisedButton(
+                  onPressed: () {
+                    customLaunch('tel:+1 555 555 555');
+                  },
+                  child: Text('Phone'),
+                ),
+                RaisedButton(
+                  onPressed: () {
+                    customLaunch('sms:5550101234');
+                  },
+                  child: Text('SMS'),
+                ),
+              ],
+            )
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
